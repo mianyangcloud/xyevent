@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiaoyang.event.dao.VideoMapper">
+
+    <!-- 通过<resultMap>映射实体类属性名和表的字段名对应关系 -->
+    <resultMap id="video" type="video">
+        <!-- id属性来映射主键字段 -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="event_id" property="eventId" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="file_name" property="fileName" jdbcType="VARCHAR"/>
+        <result column="head_image" property="headImage" jdbcType="VARCHAR"/>
+        <result column="formats" property="formats" jdbcType="VARCHAR"/>
+        <result column="size" property="size" jdbcType="INTEGER"/>
+        <result column="time" property="time" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="od_address" property="odAddress" jdbcType="VARCHAR"/>
+        <result column="ld_address" property="ldAddress" jdbcType="VARCHAR"/>
+        <result column="groupId" property="groupId" jdbcType="INTEGER"/>
+        <result column="video_id" property="videoId" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
+        <result column="utime" property="utime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_video (event_id, title
+        <if test="groupId != null">
+			, group_id
+		</if>
+		<if test="userId != null">
+			, user_id
+		</if>
+		<if test="videoId != null">
+			, video_id
+		</if>
+       	)
+        values (#{eventId}, #{title}
+        <if test="groupId != null">
+			, #{groupId}
+		</if>
+		<if test="userId != null">
+			, #{userId}
+		</if>
+        <if test="videoId != null">
+			, #{videoId}
+		</if>
+		)
+    </insert>
+
+    <sql id="base_column">
+        id, event_id, title, file_name, head_image, formats, size, time, status, od_address, ld_address, group_id, user_id, video_id, ctime, utime
+    </sql>
+    
+    <update id="update">
+    	update tb_video
+    	set
+    	<if test="title != null">
+    		title = #{title},
+    	</if> 
+    	<if test="fileName != null">
+    		file_name = #{fileName},
+    	</if>
+    	<if test="headImage != null">
+    		head_image = #{headImage},
+    	</if>
+    	<if test="formats != null">
+    		formats = #{formats},
+    	</if>
+    	<if test="size != null">
+    		size = #{size},
+    	</if>
+    	<if test="time != null">
+    		time = #{time},
+    	</if>
+    	<if test="odAddress != null">
+    		od_address = #{odAddress},
+    	</if>
+    	<if test="ldAddress != null">
+    		ld_address = #{ldAddress},
+    	</if>
+    	<if test="status != null">
+    		status = #{status},
+    	</if>
+    	<if test="groupId != null">
+    		group_id = #{groupId},
+    	</if>
+    	id = id
+    	where id = #{id} 
+    </update>
+    
+    <select id="list" resultType="video">
+		select <include refid="base_column"/> from tb_video where event_id = #{eventId} 
+		<if test="searchText != null and searchText != ''">
+			and title like #{searchText} 
+		</if>
+		order by ctime desc
+	</select>
+	
+	<select id="listByGroupId" resultType="video">
+		select <include refid="base_column"/> from tb_video where group_id = #{groupId} 
+		<if test="searchText != null and searchText != ''">
+			and title like #{searchText} 
+		</if>
+		order by ctime desc
+	</select>
+	
+	<select id="listByUserId" resultType="video">
+		select <include refid="base_column"/> from tb_video where user_id = #{userId} 
+		<if test="searchText != null and searchText != ''">
+			and title like #{searchText} 
+		</if>
+		order by ctime desc
+	</select>
+    
+    <select id="findById" resultType="video">
+    	select <include refid="base_column"/> from tb_video where id = #{id} 
+    </select>
+    
+    <select id="findByVideoId" resultType="video">
+    	select <include refid="base_column"/> from tb_video where video_id = #{videoId} 
+    </select>
+	
+	<update id="updateByArrayId">
+		update tb_video set group_id = #{groupId} where id in (
+		<foreach collection="array" item="item" separator=",">
+			#{item}
+		</foreach>
+		);
+	</update>
+
+	<delete id="deleteByArrayId">
+		delete from tb_video where id in (
+		<foreach collection="array" item="item" separator=",">
+			#{item}
+		</foreach>
+		);
+	</delete>
+</mapper>

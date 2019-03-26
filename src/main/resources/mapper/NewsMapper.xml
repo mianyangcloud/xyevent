@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiaoyang.event.dao.NewsMapper">
+
+    <!-- 通过<resultMap>映射实体类属性名和表的字段名对应关系 -->
+    <resultMap id="user" type="user">
+        <!-- id属性来映射主键字段 -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="event_id" property="eventId" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+        <result column="introduce" property="introduce" jdbcType="VARCHAR"/>
+        <result column="http_url" property="httpUrl" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
+        <result column="utime" property="utime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_news (event_id, title
+        <if test="imageUrl != null">
+        	,image_url
+        </if>
+        <if test="introduce != null">
+        	,introduce
+        </if>
+        <if test="httpUrl != null">
+        	,http_url
+        </if>
+        <if test="content != null">
+        	,content
+        </if>
+         )
+        values (#{eventId}, #{title}
+        <if test="imageUrl != null">
+        	, #{imageUrl}
+        </if>
+        <if test="introduce != null">
+        	, #{introduce}
+        </if>
+        <if test="httpUrl != null">
+        	, #{httpUrl}
+        </if>
+        <if test="content != null">
+        	, #{content}
+        </if>
+        )
+    </insert>
+
+    <sql id="base_column">
+        id, event_id, title, image_url, introduce, http_url, content, level, ctime, utime
+    </sql>
+    
+    <update id="update">
+    	update tb_news
+    	set
+    	<if test="title != null">
+    		title = #{title},
+    	</if> 
+    	<if test="imageUrl != null">
+    		image_url = #{imageUrl},
+    	</if>
+    	<if test="introduce != null">
+    		introduce = #{introduce},
+    	</if>
+    	<if test="httpUrl != null">
+    		http_url = #{httpUrl},
+    	</if>
+    	<if test="content != null">
+    		content = #{content},
+    	</if>
+    	<if test="level != null">
+    		level = #{level},
+    	</if>
+    	id = id
+    	where id = #{id} 
+    </update>
+    
+    <select id="list" resultType="news">
+		select <include refid="base_column"/> from tb_news where event_id = #{eventId} 
+		<if test="searchText != null and searchText != ''">
+			and title like #{searchText} 
+		</if>
+		order by ctime desc
+	</select>
+    
+    <select id="findById" resultType="news">
+    	select <include refid="base_column"/> from tb_news where id = #{id} 
+    </select>
+    
+    <delete id="delete">
+    	delete from tb_news where id = #{id} 
+    </delete>
+</mapper>

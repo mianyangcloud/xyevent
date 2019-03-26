@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <contextName>${appName}</contextName> 
+  <property name="logPath" value="${logPath}"/> 
+  <springProperty scope="context" name="appName" source="spring.application.name"/> 
+  <property name="commonLogPattern" value="[%d{yyyy-MM-dd HH:mm:ss.SSSZ}] [${appName}] [%highlight(%-5level)] %yellow({&quot;req_id&quot;:&quot;%X{reqId}&quot;,&quot;req_url&quot;:&quot;%X{reqUrl}&quot;,&quot;req_ip&quot;:&quot;%X{reqIp}&quot;,&quot;req_body&quot;:&quot;%X{reqBody}&quot;,&quot;req_params&quot;:&quot;%X{reqParams}&quot;,&quot;req_method&quot;:&quot;%X{reqMethod}&quot;}) %blue(%thread) %green(%logger) %msg %red(%exception) %X{elapsedTime} %n"/> 
+  <property name="commonFileLog" value="[%d{yyyy-MM-dd HH:mm:ss.SSSZ}] [${appName}] [%-5level] {&quot;req_id&quot;:&quot;%X{reqId}&quot;,&quot;req_url&quot;:&quot;%X{reqUrl}&quot;,&quot;req_ip&quot;:&quot;%X{reqIp}&quot;,&quot;req_body&quot;:&quot;%X{reqBody}&quot;,&quot;req_params&quot;:&quot;%X{reqParams}&quot;,&quot;req_method&quot;:&quot;%X{reqMethod}&quot;} %thread %logger %msg %exception %X{elapsedTime} %n"/> 
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${commonLogPattern}</pattern> 
+      <charset>utf-8</charset>
+    </encoder> 
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>debug</level>
+    </filter>
+  </appender> 
+  <appender name="FILEERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logPath}/${appName}.error.log</file> 
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${logPath}/${appName}/${appName}.error.%d{yyyy-MM-dd}.log</fileNamePattern> 
+      <maxHistory>7</maxHistory> 
+    </rollingPolicy> 
+    <append>true</append> 
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>${commonFileLog}</pattern> 
+      <charset>utf-8</charset>
+    </encoder> 
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>error</level> 
+      <onMatch>ACCEPT</onMatch> 
+      <onMismatch>DENY</onMismatch>
+    </filter>
+  </appender> 
+  <appender name="ELK" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logPath}/${appName}.log</file> 
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${logPath}/${appName}.%d{yyyy-MM-dd}.log</fileNamePattern> 
+      <maxHistory>7</maxHistory> 
+    </rollingPolicy> 
+    <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+      <providers>
+        <pattern>
+          <pattern>
+          {
+            "timestamp": "%date{\"yyyy-MM-dd HH:mm:ss.SSSZ\"}",
+            "app":"${appName}",
+            "level":"%level",
+            "thread":"%thread",
+            "logger":"%logger",
+            "class":"%class",
+            "line":"%line",
+            "req_id":"%X{reqId}",
+            "req_url":"%X{reqUrl}",
+            "req_ip":"%X{reqIp}",
+            "req_body":"%X{reqBody}",
+            "req_params":"%X{reqParams}",
+            "req_method":"%X{reqMethod}",
+            "msg":"%msg",
+            "ex":"%exception",
+            "startTime":"%X{startTime}",
+            "during":"%X{elapsedTime}"
+            }
+          </pattern>
+        </pattern>
+      </providers>
+    </encoder>
+  </appender> 
+  <logger name="org.springframework" level="INFO"/> 
+  <root level="INFO">
+    <appender-ref ref="ELK"/> 
+    <appender-ref ref="FILEERROR"/> 
+    <appender-ref ref="STDOUT"/>
+  </root>
+</configuration>

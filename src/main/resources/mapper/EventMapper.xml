@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyang.event.dao.EventMapper">
+	
+	<!-- 通过<resultMap>映射实体类属性名和表的字段名对应关系 -->
+    <resultMap id="event" type="event">
+        <!-- id属性来映射主键字段 -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="account_id" property="accountId" jdbcType="INTEGER"/>
+        <result column="begin_time" property="beginTime" jdbcType="BIGINT"/>
+        <result column="end_time" property="endTime" jdbcType="BIGINT"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
+        <result column="utime" property="utime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_event
+		(title, account_id, begin_time) values
+		(#{title}, #{accountId}, #{beginTime})
+	</insert>
+	
+	<sql id="base_column">
+        id, title, description, account_id, begin_time, end_time, ctime, utime
+    </sql>
+
+	<update id="update">
+		update tb_event 
+		set
+		<if test="title != null">
+    		title = #{title},
+    	</if>
+    	<if test="description != null">
+    		description = #{description},
+    	</if>
+    	<if test="beginTime != null">
+    		begin_time = #{beginTime},
+    	</if>
+    	<if test="endTime != null">
+    		end_time = #{endTime},
+    	</if>
+    	id = id
+    	where id = #{id} 
+	</update>
+
+	<select id="findById" resultType="event">
+		select <include refid="base_column"/> from tb_event where id = #{id} 
+	</select>
+	
+	<select id="list" resultType="event">
+		select <include refid="base_column"/> from tb_event where account_id = #{accountId} 
+		<if test="searchText != null and searchText != ''">
+			and title like #{searchText}
+		</if>
+		order by ctime desc
+	</select>
+
+</mapper>

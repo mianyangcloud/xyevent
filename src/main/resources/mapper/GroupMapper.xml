@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyang.event.dao.GroupMapper">
+	
+	<!-- 通过<resultMap>映射实体类属性名和表的字段名对应关系 -->
+    <resultMap id="group" type="group">
+        <!-- id属性来映射主键字段 -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="event_id" property="eventId" jdbcType="INTEGER"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
+        <result column="utime" property="utime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_group
+		(title, event_id, 
+		<if test="level != null">
+			level, 
+		</if>
+		type) values
+		(#{title}, #{eventId}, 
+		<if test="level != null">
+			#{level}, 
+		</if>
+		#{type})
+	</insert>
+	
+	<sql id="base_column">
+        id, title, event_id, level, type, ctime, utime
+    </sql>
+
+	<update id="update">
+		update tb_group 
+		set
+		<if test="title != null">
+    		title = #{title},
+    	</if>
+    	<if test="level != null">
+    		level = #{level},
+    	</if>
+    	id = id
+    	where id = #{id} 
+	</update>
+	
+	<delete id="delete">
+		delete from tb_group where id = #{id}
+	</delete>
+
+	<select id="findById" resultType="group">
+		select <include refid="base_column"/> from tb_group where id = #{id} 
+	</select>
+	
+	<select id="list" resultType="group">
+		select <include refid="base_column"/> from tb_group where event_id = #{eventId} and type = #{type}
+		<if test="searchText != null and searchText != ''">
+			and title like #{searchText}
+		</if>
+		order by level
+	</select>
+
+</mapper>

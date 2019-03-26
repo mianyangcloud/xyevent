@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiaoyang.event.dao.QuestionMapper">
+
+    <!-- 通过<resultMap>映射实体类属性名和表的字段名对应关系 -->
+    <resultMap id="question" type="question">
+        <!-- id属性来映射主键字段 -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="index" property="index" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="survey_id" property="surveyId" jdbcType="INTEGER"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
+        <result column="utime" property="utime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_question (title, index, type, survey_id)
+        values (#{question.title}, #{question.index}, #{question.type}, #{question.surveyId})
+    </insert>
+
+    <sql id="base_column">
+        id, title, index, type, survey_id, ctime, utime
+    </sql>
+    
+    <update id="update">
+    	update tb_question
+    	set 
+    	<if test="question.title!=null">
+    		title = #{question.title},
+    	</if>
+    	<if test="question.index!=null">
+    		index = #{question.index},
+    	</if>
+    	<if test="question.type!=null">
+    		type = #{question.type},
+    	</if>
+    	id = id
+    	where id = #{question.id} 
+    </update>
+    
+    <select id="findById" resultType="question">
+    	select <include refid="base_column"/> from tb_question where id = #{id} 
+    </select>
+    
+    <select id="findQuestionList" resultType="question">
+    	select <include refid="base_column"/> from tb_question where survey_id = #{surveyId} 
+    </select>
+</mapper>

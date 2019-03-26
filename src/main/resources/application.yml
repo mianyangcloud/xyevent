@@ -1,0 +1,66 @@
+appName: ${appName}
+
+domain: ${domain}
+
+server:
+  port: ${server.port}
+  tomcat:
+      accept-count: ${server.tomcat.accept-count}
+      max-connections: ${server.tomcat.max-connections}
+      max-threads: ${server.tomcat.max-threads}
+      accesslog:
+          buffered: ${server.tomcat.accesslog.buffered}
+          directory: ${server.tomcat.accesslog.directory}
+          enabled: ${server.tomcat.accesslog.enabled}
+          file-date-format: ${server.tomcat.accesslog.file-date-format}
+          pattern: ${server.tomcat.accesslog.pattern}
+          prefix: ${server.tomcat.accesslog.prefix}
+          rename-on-rotate: ${server.tomcat.accesslog.rename-on-rotate}
+          request-attributes-enabled: ${server.tomcat.accesslog.request-attributes-enabled}
+          rotate: ${server.tomcat.accesslog.rotate}
+          suffix: ${server.tomcat.accesslog.suffix}
+  servlet:
+    context-path: /xyevent
+
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mapper/*.xml  #注意：一定要对应mapper映射xml文件的所在路径
+  type-aliases-package: com.xiaoyang.event.domain  # 注意：对应实体类的路径
+  
+spring:
+  datasource:
+    url: ${datasource.url}
+    username: ${datasource.uersname}
+    password: ${datasource.password}
+    driver-class-name: ${datasource.driver-class-name}
+    type: ${datasource.type}
+    hikari:
+      pool-name: ${datasource.pool-name}
+      minimum-idle: ${datasource.minimum-idle}
+      maximum-pool-size: ${datasource.maximum-pool-size}
+      idle-timeout: ${datasource.idle-timeout}
+      max-lifetime: ${datasource.max-lifetime}
+      connection-timeout: ${datasource.connection-timeout}
+
+  mvc:
+    favicon:
+      enabled: false
+    static-path-pattern: /static/**
+
+  servlet: 
+    multipart:
+      enabled: true
+      max-file-size: 30MB
+      max-request-size: 30MB
+    
+  freemarker: 
+    suffix: .ftl
+    content-type: text/html
+    charset: UTF-8
+    cache: false
+    template-loader-path: 
+      - classpath:/templates
+    request-context-attribute: request
+     
+logging:
+  config: classpath:logback-spring.xml

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyang.event.dao.PictureMapper">
+	
+	<!-- 通过<resultMap>映射实体类属性名和表的字段名对应关系 -->
+    <resultMap id="picture" type="picture">
+        <!-- id属性来映射主键字段 -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="event_id" property="eventId" jdbcType="INTEGER"/>
+        <result column="group_id" property="groupId" jdbcType="INTEGER"/>
+        <result column="size" property="size" jdbcType="BIGINT"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
+        <result column="utime" property="utime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_picture
+		(title, url, event_id
+		<if test="groupId != null">
+			, group_id
+		</if>
+		<if test="userId != null">
+			, user_id
+		</if>
+		, size) values
+		(#{title}, #{url}, #{eventId}
+		<if test="groupId != null">
+			, #{groupId}
+		</if>
+		<if test="userId != null">
+			, #{userId}
+		</if>
+		, #{size})
+	</insert>
+	
+	<sql id="base_column">
+        id, title, url, event_id, group_id, user_id, size, status, ctime, utime
+    </sql>
+
+	<update id="update">
+		update tb_picture
+		set
+		<if test="title != null">
+    		title = #{title},
+    	</if>
+    	<if test="status != null">
+    		level = #{status},
+    	</if>
+    	id = id
+    	where id = #{id} 
+	</update>
+
+	<select id="findById" resultType="picture">
+		select <include refid="base_column"/> from tb_picture where id = #{id} 
+	</select>
+	
+	<select id="list" resultType="picture">
+		select <include refid="base_column"/> from tb_picture where event_id = #{eventId} order by ctime desc
+	</select>
+	
+	<select id="listByGroupId" resultType="picture">
+		select <include refid="base_column"/> from tb_picture where group_id = #{groupId} order by ctime desc
+	</select>
+	
+	<select id="listByUserId" resultType="picture">
+		select <include refid="base_column"/> from tb_picture where user_id = #{userId} order by ctime desc
+	</select>
+	
+	<update id="updateByArrayId">
+		update tb_picture set group_id = #{groupId} where id in (
+		<foreach collection="array" item="item" separator=",">
+			#{item}
+		</foreach>
+		);
+	</update>
+
+	<delete id="deleteByArrayId">
+		delete from tb_picture where id in (
+		<foreach collection="array" item="item" separator=",">
+			#{item}
+		</foreach>
+		);
+	</delete>
+</mapper>

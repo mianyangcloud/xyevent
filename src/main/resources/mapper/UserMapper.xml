@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiaoyang.event.dao.UserMapper">
+
+    <!-- 通过<resultMap>映射实体类属性名和表的字段名对应关系 -->
+    <resultMap id="user" type="user">
+        <!-- id属性来映射主键字段 -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="event_id" property="eventId" jdbcType="INTEGER"/>
+        <result column="open_id" property="openId" jdbcType="VARCHAR"/>
+        <result column="realname" property="realname" jdbcType="VARCHAR"/>
+        <result column="mobilenum" property="mobilenum" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="company" property="company" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
+        <result column="utime" property="utime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_user (event_id, mobilenum
+        <if test="realname != null">
+        	,realname
+        </if>
+        <if test="email != null">
+        	,email
+        </if>
+        <if test="code != null">
+        	,code
+        </if>
+         )
+        values (#{eventId}, #{mobilenum}
+        <if test="realname != null">
+        	, #{realname}
+        </if>
+        <if test="email != null">
+        	, #{email}
+        </if>
+        <if test="code != null">
+        	, #{code}
+        </if>
+        )
+    </insert>
+
+    <sql id="base_column">
+        id, event_id, open_id, realname, mobilenum, email, remark, company, status, code, ctime, utime
+    </sql>
+    
+    <update id="update">
+    	update tb_user
+    	set 
+    	<if test="openId != null">
+    		open_id = #{openId},
+    	</if>
+    	<if test="realname != null">
+    		realname = #{realname},
+    	</if>
+    	<if test="mobilenum != null">
+    		mobilenum = #{mobilenum},
+    	</if>
+    	<if test="email != null">
+    		email = #{email},
+    	</if>
+    	<if test="remark != null">
+    		remark = #{remark},
+    	</if>
+    	<if test="company != null">
+    		company = #{company},
+    	</if>
+    	<if test="status != null">
+    		status = #{status},
+    	</if>
+    	<if test="code != null">
+    		code = #{code},
+    	</if>
+    	id = id
+    	where id = #{id} 
+    </update>
+    
+    <update id="updateCode">
+    	update tb_user
+    	set 
+    	<if test="code != null">
+    		code = #{code},
+    	</if>
+    	id = id
+    	where mobilenum = #{mobilenum} and event_id = #{eventId}
+    </update>
+    
+    <select id="list" resultType="user">
+		select <include refid="base_column"/> from tb_user where event_id = #{eventId} 
+		<if test="searchText != null and searchText != ''">
+			and ( mobilenum like #{searchText} 
+			or email like #{searchText}
+			or realname like #{searchText} )
+		</if>
+		order by ctime desc
+	</select>
+    
+    <select id="findById" resultType="user">
+    	select <include refid="base_column"/> from tb_user where id = #{id} 
+    </select>
+    
+    <select id="findByMobilenum" resultType="user">
+    	select <include refid="base_column"/> from tb_user where event_id = #{eventId} and mobilenum = #{mobilenum}
+    </select>
+    
+    <select id="findByEmail" resultType="user">
+    	select <include refid="base_column"/> from tb_user where event_id = #{eventId} and email = #{email}
+    </select>
+</mapper>

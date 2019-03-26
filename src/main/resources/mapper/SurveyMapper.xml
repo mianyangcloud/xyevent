@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xiaoyang.event.dao.SurveyMapper">
+
+    <!-- 通过<resultMap>映射实体类属性名和表的字段名对应关系 -->
+    <resultMap id="survey" type="survey">
+        <!-- id属性来映射主键字段 -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="account_id" property="accountId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
+        <result column="utime" property="utime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_survey (title, account_id)
+        values (#{survey.title}, #{survey.accountId})
+    </insert>
+
+    <sql id="base_column">
+        id, title, account_id, status, ctime, utime
+    </sql>
+    
+    <update id="update">
+    	update tb_survey
+    	set 
+    	<if test="survey.title!=null">
+    		title = #{survey.title},
+    	</if>
+    	<if test="survey.status!=null">
+    		status = #{survey.status},
+    	</if>
+    	id = id
+    	where id = #{survey.id} 
+    </update>
+    
+    <select id="findById" resultType="survey">
+    	select <include refid="base_column"/> from tb_survey where id = #{id} 
+    </select>
+    
+    <select id="findSurveyList" resultType="survey">
+    	select <include refid="base_column"/> from tb_survey where account_id = #{accountId} order by ctime
+    </select>
+</mapper>
