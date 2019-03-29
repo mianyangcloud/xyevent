@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jacoco.agent.rt.internal_1f1cc91.core.internal.flow.IFrame;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,33 +30,7 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public PageDto list(int eventId, String searchText, PageModel pageModel) {
-		Page<User> page = PageHelper.startPage(pageModel.getPageNumber(), pageModel.getPageSize(), true);
-		if(StringUtils.isEmpty(searchText)) {
-			searchText = "";
-		}else{
-			searchText = "%" + searchText + "%";
-		}
-		List<User> list = userMapper.list(eventId, searchText);
-		PageDto pageDto = new PageDto();
-		if(CollectionUtils.isEmpty(list)){
-			pageDto.setRows(Collections.EMPTY_LIST);
-        }else {
-        	List<UserDto> dtoList = Lists.newArrayList();
-        	for(User user : list) {
-        		UserDto userDto = UserDto.of();
-        		BeanUtils.copyProperties(user, userDto);
-        		userDto.setCreateTime(DateUtil.stampToDate(user.getCtime().getTime()));
-        		if(userDto.getStatus() == 0) {
-        			userDto.setStatusStr("启用");
-        		}else {
-        			userDto.setStatusStr("禁用");
-        		}
-        		dtoList.add(userDto);
-        	}
-        	pageDto.setRows(dtoList);
-        }
-		pageDto.setTotal((int)page.getTotal());
-		return pageDto;
+		return listByType(eventId,searchText,pageModel,0);
 	}
 	
 	@Override
@@ -111,5 +86,46 @@ public class UserServiceImpl implements UserService{
 			return true;
 		}
 		return false;
+	}
+
+    @Override
+    public PageDto listByName(int eventId, String name, PageModel pageModel) {
+	  return listByType(eventId,name,pageModel,1);
+    }
+
+//  searchType 1 按realname查找 0 默认 mapper list查找
+    private PageDto listByType(int eventId, String name, PageModel pageModel,int searchType) {
+		Page<User> page = PageHelper.startPage(pageModel.getPageNumber(), pageModel.getPageSize(), true);
+		if(StringUtils.isEmpty(name)) {
+			name = "";
+		}else{
+			name = "%" + name + "%";
+		}
+		List<User> list;
+		if (searchType == 1) {
+			list = userMapper.listByName(eventId,name);
+		} else {
+			list = userMapper.list(eventId,name);
+		}
+		PageDto pageDto = new PageDto();
+		if(CollectionUtils.isEmpty(list)){
+			pageDto.setRows(Collections.EMPTY_LIST);
+		}else {
+			List<UserDto> dtoList = Lists.newArrayList();
+			for(User user : list) {
+				UserDto userDto = UserDto.of();
+				BeanUtils.copyProperties(user, userDto);
+				userDto.setCreateTime(DateUtil.stampToDate(user.getCtime().getTime()));
+				if(userDto.getStatus() == 0) {
+					userDto.setStatusStr("启用");
+				}else {
+					userDto.setStatusStr("禁用");
+				}
+				dtoList.add(userDto);
+			}
+			pageDto.setRows(dtoList);
+		}
+		pageDto.setTotal((int)page.getTotal());
+		return pageDto;
 	}
 }

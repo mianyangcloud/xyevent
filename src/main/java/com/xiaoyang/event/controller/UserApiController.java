@@ -52,5 +52,9 @@ public class UserApiController extends BaseCotroller{
 			return ResultResp.returnError(CommonCodes.ERROR_DB_UPDATE,"更新失败");
 		}
     }
+    @RequestMapping("/listByName")
+    public PageDto listByName(PageModel pageModel, String searchText) {
+        return userService.listByName(getEvent().getId(),searchText,pageModel);
+    }
 
 }

@@ -23,5 +23,5 @@ public interface UserService extends BaseService<User> {
 	boolean updateRealName(int eventId,int userId,String realname);
 
 	//按用户名搜索
-//	PageDto listByName(int eventId, String searchText, PageModel pageModel);
+	PageDto listByName(int eventId, String name, PageModel pageModel);
 }
