@@ -114,21 +114,18 @@
     	select <include refid="base_column"/> from tb_user where event_id = #{eventId} and email = #{email}
     </select>
 
-    <!--修改姓名-->
-	<update id="updateRealName">
-		update tb_user
-		set
-		<if test="realname != null">
-			realname = #{realname}
-		</if>
-		where id = #{userId}
-	</update>
-
     <!--按姓名搜索-->
     <select id="listByName" resultType="user">
-        select <include refid="base_column"/> from tb_user
+        select <include refid="base_column"/> from tb_user where event_id = #{eventId}
         <if test="searchText != null and searchText != ''">
-			where realname like #{searchText} order by ctime desc
+			and realname like #{searchText}
 		</if>
+
+		order by ctime desc
+    </select>
+
+    <!--查询指定id realname-->
+    <select id="shouldFillRealName" resultType="String">
+        select realname from tb_user where event_id = #{eventId} and id = #{userId}
     </select>
 </mapper>

@@ -19,4 +19,6 @@ public interface UserMapper extends BaseMapper<User>{
 	int updateRealName(int eventId, int userId, String realname);
 
 	List<User> listByName(int eventId,String searchText);
+
+	String shouldFillRealName(int eventId, int userId);
 }

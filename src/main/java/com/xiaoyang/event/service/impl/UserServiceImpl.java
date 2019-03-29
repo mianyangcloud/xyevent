@@ -23,14 +23,17 @@ import com.xiaoyang.event.service.UserService;
 import com.xiaoyang.event.utils.DateUtil;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl<res> implements UserService{
 
 	@Autowired
 	UserMapper userMapper;
 	
 	@Override
 	public PageDto list(int eventId, String searchText, PageModel pageModel) {
-		return listByType(eventId,searchText,pageModel,0);
+		Page<User> page = PageHelper.startPage(pageModel.getPageNumber(), pageModel.getPageSize(), true);
+		searchText = StringUtils.isEmpty(searchText) ? "" : "%" + searchText + "%";
+		List<User> list = userMapper.list(eventId,searchText);
+		return createPageDto(list,page);
 	}
 	
 	@Override
@@ -81,36 +84,35 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public boolean updateRealName(int eventId,int userId,String realname){
-		int ret = userMapper.updateRealName(eventId, userId,realname);
-		if (ret == 1) {
-			return true;
+		User user = userMapper.findById(userId);
+		boolean res = false;
+		if (user != null) {
+			user.setRealname(realname);
+			res = (userMapper.update(user) == 1);
 		}
-		return false;
+		return res;
 	}
 
     @Override
     public PageDto listByName(int eventId, String name, PageModel pageModel) {
-	  return listByType(eventId,name,pageModel,1);
-    }
-
-//  searchType 1 按realname查找 0 默认 mapper list查找
-    private PageDto listByType(int eventId, String name, PageModel pageModel,int searchType) {
 		Page<User> page = PageHelper.startPage(pageModel.getPageNumber(), pageModel.getPageSize(), true);
-		if(StringUtils.isEmpty(name)) {
-			name = "";
-		}else{
-			name = "%" + name + "%";
-		}
-		List<User> list;
-		if (searchType == 1) {
-			list = userMapper.listByName(eventId,name);
-		} else {
-			list = userMapper.list(eventId,name);
-		}
+		name = StringUtils.isEmpty(name) ? "" : "%" + name + "%";
+		List<User> list = userMapper.listByName(eventId,name);
+		return createPageDto(list,page);
+	}
+
+	@Override
+	public boolean shouldFillRealName(int eventId,int userId) {
+		String realName = userMapper.shouldFillRealName(eventId,userId);
+		return !StringUtils.isNotBlank(realName);
+	}
+
+	//createPageDto helper
+	private PageDto createPageDto(List<User> list,Page<User> page) {
 		PageDto pageDto = new PageDto();
 		if(CollectionUtils.isEmpty(list)){
 			pageDto.setRows(Collections.EMPTY_LIST);
-		}else {
+		} else {
 			List<UserDto> dtoList = Lists.newArrayList();
 			for(User user : list) {
 				UserDto userDto = UserDto.of();
@@ -125,7 +127,7 @@ public class UserServiceImpl implements UserService{
 			}
 			pageDto.setRows(dtoList);
 		}
-		pageDto.setTotal((int)page.getTotal());
+	 	pageDto.setTotal((int)page.getTotal());
 		return pageDto;
 	}
 }
