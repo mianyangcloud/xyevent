@@ -1,10 +1,9 @@
 package com.xiaoyang.event.dao;
 
-import java.util.List;
-
+import com.xiaoyang.event.domain.User;
 import org.apache.ibatis.annotations.Mapper;
 
-import com.xiaoyang.event.domain.User;
+import java.util.List;
 
 @Mapper
 public interface UserMapper extends BaseMapper<User>{
@@ -16,4 +15,6 @@ public interface UserMapper extends BaseMapper<User>{
 	User findByEmail(int eventId, String email);
 	
 	int updateCode(int eventId, int code, String mobilenum);
+
+	int updateRealName(int eventId, int userId, String realname);
 }

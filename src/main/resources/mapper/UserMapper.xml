@@ -113,4 +113,13 @@
     <select id="findByEmail" resultType="user">
     	select <include refid="base_column"/> from tb_user where event_id = #{eventId} and email = #{email}
     </select>
+
+	<update id="updateRealName">
+		update tb_user
+		set
+		<if test="realname != null">
+			realname = #{realname}
+		</if>
+		where id = #{userId}
+	</update>
 </mapper>

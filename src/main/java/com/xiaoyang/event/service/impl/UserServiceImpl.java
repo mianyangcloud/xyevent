@@ -98,7 +98,16 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public boolean updateCode(int eventId, int code, String mobilenum) {
 		int ret = userMapper.updateCode(eventId, code, mobilenum);
-		if(ret == 1) {
+		if (ret == 1) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean updateRealName(int eventId,int userId,String realname){
+		int ret = userMapper.updateRealName(eventId, userId,realname);
+		if (ret == 1) {
 			return true;
 		}
 		return false;
