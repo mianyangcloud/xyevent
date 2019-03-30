@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jacoco.agent.rt.internal_1f1cc91.core.internal.flow.IFrame;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ import com.xiaoyang.event.service.UserService;
 import com.xiaoyang.event.utils.DateUtil;
 
 @Service
-public class UserServiceImpl<res> implements UserService{
+public class UserServiceImpl implements UserService{
 
 	@Autowired
 	UserMapper userMapper;
@@ -31,9 +30,58 @@ public class UserServiceImpl<res> implements UserService{
 	@Override
 	public PageDto list(int eventId, String searchText, PageModel pageModel) {
 		Page<User> page = PageHelper.startPage(pageModel.getPageNumber(), pageModel.getPageSize(), true);
-		searchText = StringUtils.isEmpty(searchText) ? "" : "%" + searchText + "%";
-		List<User> list = userMapper.list(eventId,searchText);
-		return createPageDto(list,page);
+		if(StringUtils.isEmpty(searchText)) {
+			searchText = "";
+		}else{
+			searchText = "%" + searchText + "%";
+		}
+		List<User> list = userMapper.list(eventId, searchText);
+		PageDto pageDto = new PageDto();
+		if(CollectionUtils.isEmpty(list)){
+			pageDto.setRows(Collections.EMPTY_LIST);
+        }else {
+        	List<UserDto> dtoList = Lists.newArrayList();
+        	for(User user : list) {
+        		UserDto userDto = UserDto.of();
+        		BeanUtils.copyProperties(user, userDto);
+        		userDto.setCreateTime(DateUtil.stampToDate(user.getCtime().getTime()));
+        		if(userDto.getStatus() == 0) {
+        			userDto.setStatusStr("启用");
+        		}else {
+        			userDto.setStatusStr("禁用");
+        		}
+        		dtoList.add(userDto);
+        	}
+        	pageDto.setRows(dtoList);
+        }
+		pageDto.setTotal((int)page.getTotal());
+		return pageDto;
+	}
+	
+	@Override
+	public PageDto listByName(int eventId, String searchText, PageModel pageModel) {
+		Page<User> page = PageHelper.startPage(pageModel.getPageNumber(), pageModel.getPageSize(), true);
+		if(StringUtils.isEmpty(searchText)) {
+			searchText = "";
+		}else{
+			searchText = "%" + searchText + "%";
+		}
+		List<User> list = userMapper.listByName(eventId, searchText);
+		PageDto pageDto = new PageDto();
+		if(CollectionUtils.isEmpty(list)){
+			pageDto.setRows(Collections.EMPTY_LIST);
+        }else {
+        	List<UserDto> dtoList = Lists.newArrayList();
+        	for(User user : list) {
+        		UserDto userDto = UserDto.of();
+        		BeanUtils.copyProperties(user, userDto);
+        		userDto.setCreateTime(DateUtil.stampToDate(user.getCtime().getTime()));
+        		dtoList.add(userDto);
+        	}
+        	pageDto.setRows(dtoList);
+        }
+		pageDto.setTotal((int)page.getTotal());
+		return pageDto;
 	}
 	
 	@Override
@@ -80,54 +128,5 @@ public class UserServiceImpl<res> implements UserService{
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public boolean updateRealName(int eventId,int userId,String realname){
-		User user = userMapper.findById(userId);
-		boolean res = false;
-		if (user != null) {
-			user.setRealname(realname);
-			res = (userMapper.update(user) == 1);
-		}
-		return res;
-	}
-
-    @Override
-    public PageDto listByName(int eventId, String name, PageModel pageModel) {
-		Page<User> page = PageHelper.startPage(pageModel.getPageNumber(), pageModel.getPageSize(), true);
-		name = StringUtils.isEmpty(name) ? "" : "%" + name + "%";
-		List<User> list = userMapper.listByName(eventId,name);
-		return createPageDto(list,page);
-	}
-
-	@Override
-	public boolean shouldFillRealName(int eventId,int userId) {
-		String realName = userMapper.shouldFillRealName(eventId,userId);
-		return !StringUtils.isNotBlank(realName);
-	}
-
-	//createPageDto helper
-	private PageDto createPageDto(List<User> list,Page<User> page) {
-		PageDto pageDto = new PageDto();
-		if(CollectionUtils.isEmpty(list)){
-			pageDto.setRows(Collections.EMPTY_LIST);
-		} else {
-			List<UserDto> dtoList = Lists.newArrayList();
-			for(User user : list) {
-				UserDto userDto = UserDto.of();
-				BeanUtils.copyProperties(user, userDto);
-				userDto.setCreateTime(DateUtil.stampToDate(user.getCtime().getTime()));
-				if(userDto.getStatus() == 0) {
-					userDto.setStatusStr("启用");
-				}else {
-					userDto.setStatusStr("禁用");
-				}
-				dtoList.add(userDto);
-			}
-			pageDto.setRows(dtoList);
-		}
-	 	pageDto.setTotal((int)page.getTotal());
-		return pageDto;
 	}
 }

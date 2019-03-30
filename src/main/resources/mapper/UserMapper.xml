@@ -101,6 +101,15 @@
 		</if>
 		order by ctime desc
 	</select>
+	
+	<!--按姓名搜索-->
+    <select id="listByName" resultType="user">
+        select <include refid="base_column"/> from tb_user where event_id = #{eventId} and status = 0
+        <if test="searchText != null and searchText != ''">
+			and realname like #{searchText}
+		</if>
+		order by ctime desc
+    </select>
     
     <select id="findById" resultType="user">
     	select <include refid="base_column"/> from tb_user where id = #{id} 
@@ -112,20 +121,5 @@
     
     <select id="findByEmail" resultType="user">
     	select <include refid="base_column"/> from tb_user where event_id = #{eventId} and email = #{email}
-    </select>
-
-    <!--按姓名搜索-->
-    <select id="listByName" resultType="user">
-        select <include refid="base_column"/> from tb_user where event_id = #{eventId}
-        <if test="searchText != null and searchText != ''">
-			and realname like #{searchText}
-		</if>
-
-		order by ctime desc
-    </select>
-
-    <!--查询指定id realname-->
-    <select id="shouldFillRealName" resultType="String">
-        select realname from tb_user where event_id = #{eventId} and id = #{userId}
     </select>
 </mapper>

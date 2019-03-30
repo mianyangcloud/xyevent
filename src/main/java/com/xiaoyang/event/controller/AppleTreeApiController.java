@@ -176,20 +176,16 @@ public class AppleTreeApiController extends BaseCotroller{
     	return ResultResp.returnSuccess(videoService.listByUserId(userId, null, pageModel));
     }
 
-    //-------user------//
 	@RequestMapping("/user/listByName")
 	public ResultResp listByName(PageModel pageModel, String searchText) {
-		return ResultResp.returnSuccess(userService.listByName(4,searchText,pageModel));
-
+		return ResultResp.returnSuccess(userService.listByName(eventId, searchText, pageModel));
 	}
-
-    @RequestMapping("/user/checkRealName")
-    public ResultResp checkRealName(Integer userId) {
-		return ResultResp.returnSuccess(userService.shouldFillRealName(4,userId));
-	}
-	@RequestMapping("/user/udpateRealName")
-	public ResultResp updateRealName(Integer userId,String name) {
-		return ResultResp.returnSuccess(userService.updateRealName(4,userId,name));
+	
+	@RequestMapping("/user/update")
+	public ResultResp updateRealName(int userId,String realname) {
+		User user = User.of().setId(userId).setRealname(realname);
+		userService.update(user);
+		return ResultResp.returnSuccess();
 	}
 
 }
