@@ -18,6 +18,7 @@
         <result column="company" property="company" jdbcType="VARCHAR"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
         <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="privacy" property="privacy" jdbcType="INTEGER"/>
         <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
         <result column="utime" property="utime" jdbcType="TIMESTAMP"/>
     </resultMap>
@@ -77,6 +78,9 @@
     	</if>
     	<if test="code != null">
     		code = #{code},
+    	</if>
+    	<if test="privacy != null">
+    		privacy = #{privacy},
     	</if>
     	id = id
     	where id = #{id} 

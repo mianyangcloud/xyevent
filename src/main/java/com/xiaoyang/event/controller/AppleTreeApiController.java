@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xiaoyang.event.common.PageModel;
 import com.xiaoyang.event.common.ResultResp;
 import com.xiaoyang.event.constant.CommonCodes;
@@ -139,6 +140,19 @@ public class AppleTreeApiController extends BaseCotroller{
     	return ResultResp.returnSuccess(pictureService.listByUserId(userId, pageModel));
     }
     
+    @RequestMapping("/picture/userList")
+    public ResultResp pictureUserList(PageModel pageModel, Integer userId) {
+    	User user = userService.findById(userId);
+    	PageDto pageDto = new PageDto();
+    	if(user.getPrivacy() == 0) {
+    		pageDto = pictureService.listByUserId(userId, pageModel);
+    	}
+    	JSONObject jsob = new JSONObject();
+    	jsob.put("user", user);
+    	jsob.put("pageDto", pageDto);
+    	return ResultResp.returnSuccess(jsob);
+    }
+    
     @PostMapping("/video/upload")
 	public ResultResp getUploadUrl(String title, String fileName, int userId, @RequestParam MultipartFile file) throws IOException {
     	Video video = Video.of();
@@ -175,15 +189,35 @@ public class AppleTreeApiController extends BaseCotroller{
     public ResultResp videoList(PageModel pageModel, Integer userId) {
     	return ResultResp.returnSuccess(videoService.listByUserId(userId, null, pageModel));
     }
+    
+    @RequestMapping("/video/userList")
+    public ResultResp videoUserList(PageModel pageModel, Integer userId) {
+    	User user = userService.findById(userId);
+    	PageDto pageDto = new PageDto();
+    	if(user.getPrivacy() == 0) {
+    		pageDto = videoService.listByUserId(userId, null, pageModel);
+    	}
+    	JSONObject jsob = new JSONObject();
+    	jsob.put("user", user);
+    	jsob.put("pageDto", pageDto);
+    	return ResultResp.returnSuccess(jsob);
+    }
 
 	@RequestMapping("/user/listByName")
 	public ResultResp listByName(PageModel pageModel, String searchText) {
 		return ResultResp.returnSuccess(userService.listByName(eventId, searchText, pageModel));
 	}
 	
-	@RequestMapping("/user/update")
+	@RequestMapping("/user/updateRealName")
 	public ResultResp updateRealName(int userId,String realname) {
 		User user = User.of().setId(userId).setRealname(realname);
+		userService.update(user);
+		return ResultResp.returnSuccess();
+	}
+	
+	@RequestMapping("/user/updatePrivacy")
+	public ResultResp updatePrivacy(int userId,int privacy) {
+		User user = User.of().setId(userId).setPrivacy(privacy);
 		userService.update(user);
 		return ResultResp.returnSuccess();
 	}

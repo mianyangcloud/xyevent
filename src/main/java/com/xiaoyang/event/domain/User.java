@@ -31,6 +31,8 @@ public class User {
 	
 	private Integer code;
 	
+	private Integer privacy;
+	
 	private Date ctime;
     
     private Date utime;
