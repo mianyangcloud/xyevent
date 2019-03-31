@@ -49,7 +49,7 @@
     </insert>
 
     <sql id="base_column">
-        id, event_id, open_id, realname, mobilenum, email, remark, company, status, code, ctime, utime
+        id, event_id, open_id, realname, mobilenum, email, remark, company, status, code, privacy, ctime, utime
     </sql>
     
     <update id="update">
