@@ -131,6 +131,7 @@ public class AppleTreeApiController extends BaseCotroller{
     			.setUrl(ImageUtil.uploadImage(m))
     			.setUserId(userId);
         	pictureService.add(picture);
+        	userService.updateMeidaNum(0, userId);
     	}
     	return ResultResp.returnSuccess();
   	}
@@ -163,6 +164,7 @@ public class AppleTreeApiController extends BaseCotroller{
     	String videoId = VodUtil.videoUploadStream(OSS.ACCESS_KEY_ID, OSS.ACCESS_KEY_SECRET, title, fileName, file.getInputStream(), video.getId());
     	if(!StringUtils.isEmpty(videoId)) {
     		video = videoService.findByVideoId(video.getId(), videoId);
+    		userService.updateMeidaNum(1, userId);
     		return ResultResp.returnSuccess(video);
     	}
     	return ResultResp.returnError(CommonCodes.ERROR_PARAMS, "视频上传失败");

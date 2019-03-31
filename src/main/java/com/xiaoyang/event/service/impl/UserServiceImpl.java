@@ -115,6 +115,15 @@ public class UserServiceImpl implements UserService{
 			throw new SysException();
 		}
 	}
+	
+	@Override
+	public boolean updateMeidaNum(int type, int id) {
+		int ret = userMapper.updateMeidaNum(type, id);
+		if (ret == 1) {
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public User findById(int id) {

@@ -18,4 +18,6 @@ public interface UserService extends BaseService<User> {
 	User findByEmail(int eventId, String email);
 	
 	boolean updateCode(int eventId, int code, String mobilenum);
+	
+	boolean updateMeidaNum(int type, int id);
 }

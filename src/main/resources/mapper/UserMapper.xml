@@ -4,7 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.xiaoyang.event.dao.UserMapper">
-
     <!-- 通过<resultMap>映射实体类属性名和表的字段名对应关系 -->
     <resultMap id="user" type="user">
         <!-- id属性来映射主键字段 -->
@@ -19,6 +18,8 @@
         <result column="status" property="status" jdbcType="INTEGER"/>
         <result column="code" property="code" jdbcType="VARCHAR"/>
         <result column="privacy" property="privacy" jdbcType="INTEGER"/>
+        <result column="picture_num" property="pictureNum" jdbcType="INTEGER"/>
+        <result column="video_num" property="videoNum" jdbcType="INTEGER"/>
         <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
         <result column="utime" property="utime" jdbcType="TIMESTAMP"/>
     </resultMap>
@@ -49,7 +50,7 @@
     </insert>
 
     <sql id="base_column">
-        id, event_id, open_id, realname, mobilenum, email, remark, company, status, code, privacy, ctime, utime
+        id, event_id, open_id, realname, mobilenum, email, remark, company, status, code, privacy, picture_num, video_num, ctime, utime
     </sql>
     
     <update id="update">
@@ -81,6 +82,19 @@
     	</if>
     	<if test="privacy != null">
     		privacy = #{privacy},
+    	</if>
+    	id = id
+    	where id = #{id} 
+    </update>
+    
+    <update id="updateMeidaNum">
+    	update tb_user
+    	set
+    	<if test="type == 0">
+    		picture_num = picture_num + 1,
+    	</if>
+    	<if test="type == 1">
+    		video_num = video_num + 1,
     	</if>
     	id = id
     	where id = #{id} 

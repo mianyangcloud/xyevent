@@ -33,6 +33,10 @@ public class User {
 	
 	private Integer privacy;
 	
+	private Integer pictureNum;
+	
+	private Integer videoNum;
+	
 	private Date ctime;
     
     private Date utime;

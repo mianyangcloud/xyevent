@@ -17,4 +17,6 @@ public interface UserMapper extends BaseMapper<User>{
 	User findByEmail(int eventId, String email);
 	
 	int updateCode(int eventId, int code, String mobilenum);
+	
+	int updateMeidaNum(int type, int id);
 }
