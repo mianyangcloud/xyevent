@@ -122,11 +122,11 @@
 	
 	<!--按姓名搜索-->
     <select id="listByName" resultType="user">
-        select <include refid="base_column"/> from tb_user where event_id = #{eventId} and status = 0
+        select <include refid="base_column"/> from tb_user where event_id = #{eventId} and id &lt;&gt; #{userId} and status = 0
         <if test="searchText != null and searchText != ''">
 			and realname like #{searchText}
 		</if>
-		order by ctime desc
+		order by picture_num, ctime desc
     </select>
     
     <select id="findById" resultType="user">

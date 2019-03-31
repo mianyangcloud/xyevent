@@ -9,7 +9,7 @@ public interface UserService extends BaseService<User> {
 	PageDto list(int eventId, String searchText, PageModel pageModel);
 	
 	//按用户名搜索
-	PageDto listByName(int eventId, String searchText, PageModel pageModel);
+	PageDto listByName(int eventId, int userId, String searchText, PageModel pageModel);
 	
 	void delete(int id);
 	

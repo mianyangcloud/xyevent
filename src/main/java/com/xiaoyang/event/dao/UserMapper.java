@@ -10,7 +10,7 @@ public interface UserMapper extends BaseMapper<User>{
 
 	List<User> list(int eventId, String searchText);
 	
-	List<User> listByName(int eventId, String searchText);
+	List<User> listByName(int eventId, int userId, String searchText);
 	
 	User findByMobilenum(int eventId, String mobilenum);
 	

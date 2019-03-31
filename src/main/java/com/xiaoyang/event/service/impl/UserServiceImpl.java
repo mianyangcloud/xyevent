@@ -59,14 +59,14 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Override
-	public PageDto listByName(int eventId, String searchText, PageModel pageModel) {
+	public PageDto listByName(int eventId, int userId, String searchText, PageModel pageModel) {
 		Page<User> page = PageHelper.startPage(pageModel.getPageNumber(), pageModel.getPageSize(), true);
 		if(StringUtils.isEmpty(searchText)) {
 			searchText = "";
 		}else{
 			searchText = "%" + searchText + "%";
 		}
-		List<User> list = userMapper.listByName(eventId, searchText);
+		List<User> list = userMapper.listByName(eventId, userId, searchText);
 		PageDto pageDto = new PageDto();
 		if(CollectionUtils.isEmpty(list)){
 			pageDto.setRows(Collections.EMPTY_LIST);
@@ -74,6 +74,9 @@ public class UserServiceImpl implements UserService{
         	List<UserDto> dtoList = Lists.newArrayList();
         	for(User user : list) {
         		UserDto userDto = UserDto.of();
+        		if(StringUtils.isEmpty(user.getRealname())) {
+        			userDto.setRealname(userDto.getMobilenum());
+        		}
         		BeanUtils.copyProperties(user, userDto);
         		userDto.setCreateTime(DateUtil.stampToDate(user.getCtime().getTime()));
         		dtoList.add(userDto);

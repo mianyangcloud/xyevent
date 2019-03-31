@@ -188,12 +188,12 @@ public class AppleTreeApiController extends BaseCotroller{
 	}
     
     @RequestMapping("/video/list")
-    public ResultResp videoList(PageModel pageModel, Integer userId) {
+    public ResultResp videoList(PageModel pageModel, int userId) {
     	return ResultResp.returnSuccess(videoService.listByUserId(userId, null, pageModel));
     }
     
     @RequestMapping("/video/userList")
-    public ResultResp videoUserList(PageModel pageModel, Integer userId) {
+    public ResultResp videoUserList(PageModel pageModel, int userId) {
     	User user = userService.findById(userId);
     	PageDto pageDto = new PageDto();
     	if(user.getPrivacy() == 0) {
@@ -206,8 +206,8 @@ public class AppleTreeApiController extends BaseCotroller{
     }
 
 	@RequestMapping("/user/listByName")
-	public ResultResp listByName(PageModel pageModel, String searchText) {
-		return ResultResp.returnSuccess(userService.listByName(eventId, searchText, pageModel));
+	public ResultResp listByName(PageModel pageModel, String searchText, int userId) {
+		return ResultResp.returnSuccess(userService.listByName(eventId, userId, searchText, pageModel));
 	}
 	
 	@RequestMapping("/user/updateRealName")
