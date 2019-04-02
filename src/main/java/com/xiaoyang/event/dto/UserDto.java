@@ -27,6 +27,12 @@ public class UserDto {
 	
 	private Integer status;
 	
+	private Integer privacy;
+	
+	private Integer pictureNum;
+	
+	private Integer videoNum;
+	
 	private String statusStr;
 	
 	private String createTime;

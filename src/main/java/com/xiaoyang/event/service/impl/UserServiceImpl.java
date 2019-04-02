@@ -74,10 +74,10 @@ public class UserServiceImpl implements UserService{
         	List<UserDto> dtoList = Lists.newArrayList();
         	for(User user : list) {
         		UserDto userDto = UserDto.of();
+        		BeanUtils.copyProperties(user, userDto);
         		if(StringUtils.isEmpty(user.getRealname())) {
         			userDto.setRealname(userDto.getMobilenum());
         		}
-        		BeanUtils.copyProperties(user, userDto);
         		userDto.setCreateTime(DateUtil.stampToDate(user.getCtime().getTime()));
         		dtoList.add(userDto);
         	}

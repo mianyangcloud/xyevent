@@ -124,9 +124,10 @@
     <select id="listByName" resultType="user">
         select <include refid="base_column"/> from tb_user where event_id = #{eventId} and id &lt;&gt; #{userId} and status = 0
         <if test="searchText != null and searchText != ''">
-			and realname like #{searchText}
+			and ( mobilenum like #{searchText} 
+			or realname like #{searchText} )
 		</if>
-		order by picture_num, ctime desc
+		order by picture_num desc
     </select>
     
     <select id="findById" resultType="user">
