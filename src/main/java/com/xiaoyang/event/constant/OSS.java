@@ -5,12 +5,12 @@ public class OSS {
 	/**
 	 * OSS_KEY
 	 */
-	public static String ACCESS_KEY_ID = "LTAIk60EeaJcNOuI";
+	public static String ACCESS_KEY_ID = "";
 	
 	/**
 	 * OSS_SECRET
 	 */
-	public static String ACCESS_KEY_SECRET = "5TXH27LftUtsOiMqgsJAb8qxztNPJt";
+	public static String ACCESS_KEY_SECRET = "";
 	
 	/**
 	 * 点播主域名
